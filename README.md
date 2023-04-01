@@ -27,4 +27,4 @@ python3 -m scrapy crawl lianjiazufang
 tail -f lianjiaSpider/scrapy.log
 ```
 
-![MySQL效果图](https://github.com/tommyyz/lianjia_scrapy/blob/master/imgs/mysql.png)
+![MySQL效果图](https://raw.githubusercontent.com/tommyyz/lianjia_scrapy/main/imgs/mysql.png)
