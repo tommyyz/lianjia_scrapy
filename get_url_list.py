@@ -43,7 +43,8 @@ print("价格区间缩小完毕！", inter_list)
 print(f"一共有{totalnum}条房源信息")
 
 url_list = []
-with open(r'url_list.txt', 'a+') as f:
+with open(r'url_list.txt', 'w') as f:
+    f.truncate(0)
     for i in inter_list:
         totalpage = math.ceil(pagenum[i]/30)
         for j in range(1, totalpage+1):
