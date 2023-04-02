@@ -45,7 +45,9 @@ class MysqlTwistedPipeline(object):
     def do_upsert(self, cursor, item):
         upsert_sql = """insert into lianjia.spider(title, link, location, rent, latest_rent, apartment_layout, area, orientation, publish_time, unit_price, floor, longitude, latitude)
                         Values(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-                        ON DUPLICATE KEY UPDATE latest_rent = %s, publish_time = %s;"""
+                        ON DUPLICATE KEY UPDATE latest_rent = CASE WHEN latest_rent <> VALUES(latest_rent) THEN VALUES(latest_rent) ELSE latest_rent END
+                        , updated_time = CASE WHEN latest_rent <> VALUES(latest_rent) THEN now() ELSE updated_time END;"""
+                        # when duplicated, check if rent changes, set newest rent into latest_rent field if changes, if not, stay as is
         cursor.execute(upsert_sql, (item['title'], item['link'], item['location'], item['rent'], item['rent'], item['apartment_layout'], 
                                     item['area'], item['orientation'], item['publish_time'], item['unit_price'], item['floor'], item['longitude'], item['latitude'],
-                                    item['rent'], item['publish_time']))
+                                    ))
