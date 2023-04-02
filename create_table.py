@@ -7,6 +7,7 @@ sql = """CREATE TABLE spider (
          link VARCHAR(200),
          location VARCHAR(200),
          rent INT,
+         latest_rent INT,
          apartment_layout VARCHAR(200),
          area FLOAT,
          orientation VARCHAR(200),
@@ -15,7 +16,8 @@ sql = """CREATE TABLE spider (
          floor VARCHAR(200),
          longitude FLOAT,
          latitude FLOAT,
-         created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+         created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+         updated_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );"""
 
 cursor.execute(sql)

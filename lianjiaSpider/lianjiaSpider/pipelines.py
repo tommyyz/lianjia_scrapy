@@ -34,17 +34,18 @@ class MysqlTwistedPipeline(object):
         return cls(dbpool)
     
     def process_item(self, item, spider):
-        query = self.dbpool.runInteraction(self.do_insert, item)  # 异步写入，把执行sql的操作放入pool中
+        query = self.dbpool.runInteraction(self.do_upsert, item)  # 异步写入，把执行sql的操作放入pool中
         query.addErrback(self.handle_error, item, spider)  # 执行sql出现错误,会执行指定的回调函数
         return item
 
     # failure 错误原因
     def handle_error(self, failure, item, spider):
-        pass
-        # print(failure)
+        print(failure)
     
-    def do_insert(self, cursor, item):
-        insert_sql = """insert into lianjia.spider(title, link, location, rent, apartment_layout, area, orientation, publish_time, unit_price, floor, longitude, latitude)
-                        Values(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"""
-        cursor.execute(insert_sql, (item['title'], item['link'], item['location'], item['rent'], item['apartment_layout'], 
-                                    item['area'], item['orientation'], item['publish_time'], item['unit_price'], item['floor'], item['longitude'], item['latitude']))
+    def do_upsert(self, cursor, item):
+        upsert_sql = """insert into lianjia.spider(title, link, location, rent, latest_rent, apartment_layout, area, orientation, publish_time, unit_price, floor, longitude, latitude)
+                        Values(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                        ON DUPLICATE KEY UPDATE latest_rent = %s, publish_time = %s;"""
+        cursor.execute(upsert_sql, (item['title'], item['link'], item['location'], item['rent'], item['rent'], item['apartment_layout'], 
+                                    item['area'], item['orientation'], item['publish_time'], item['unit_price'], item['floor'], item['longitude'], item['latitude'],
+                                    item['rent'], item['publish_time']))
