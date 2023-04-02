@@ -3,7 +3,7 @@ import requests
 from lxml import etree
 
 city_url = 'https://sh.lianjia.com/zufang/'
-inter_list = [(7800, 11000)] # define price range to fetch
+inter_list = [(7500, 11500)] # define price range to fetch
 def binary(inter):
     lower = inter[0]
     upper = inter[1]
@@ -16,7 +16,12 @@ def binary(inter):
 pagenum = {}
 headers = {'user-agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36"}
 def get_num(inter):
-    link = city_url + f'de1ie1l0l1brp{inter[0]}erp{inter[1]}/' # "l0l1" = one bed + two bed  # "de1" = newly decorated  # "ie1" = having elevator
+    # "l0l1" = one bed + two bed  
+    # "de1" = newly decorated  
+    # "ie1" = having elevator
+    # "rt200600000001" = no share room
+    # "rba60rea140" = sqm from 60 to 140
+    link = city_url + f'de1rt200600000001l0l1rba60rea140brp{inter[0]}erp{inter[1]}/' 
     r = requests.get(link, headers=headers)
     num = int(etree.HTML(r.text).xpath('//p[@class="content__title"]/span/text()')[0])
     pagenum[(inter[0], inter[1])] = num
